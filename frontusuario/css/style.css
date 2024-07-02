@@ -1,0 +1,68 @@
+input, button {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.imglogin {
+    width: 100%;
+}
+
+.fotouser {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+#userIcon {
+    color: white;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.user {
+    margin-top: 10px;
+}
+
+.lado {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.lado {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.space {
+    margin: 10px 15px 10px 15px;
+}
+
+.altura {
+    height: 350px;
+    width: 240px;
+}
+
+.carouselImage {
+    height: 350px;
+    width: 240px;
+}
+
+.carouselDetalhe {
+    width: 241px !important;
+}
+
+.livro {
+    text-decoration: line-through;
+}
+
+.precoatual {
+    font-size: 2em;
+    color: #f83f3f;
+    text-decoration: underline;
+}
+
+.imageDetalhe {
+    height: 300px !important;
+}
