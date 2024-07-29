@@ -45,8 +45,8 @@ input, button {
 }
 
 .carouselImage {
-    height: 350px;
-    width: 240px;
+    height: 350px !important;
+    width: 240px !important;
 }
 
 .carouselDetalhe {
@@ -63,6 +63,40 @@ input, button {
     text-decoration: underline;
 }
 
+.precodesconto {
+    font-size: 1.5em;
+    color: black;
+    text-decoration: underline;
+}
+
 .imageDetalhe {
     height: 300px !important;
+}
+
+.carrinho {
+    display: flex;
+    text-decoration: none;
+    color: black;
+    align-items: center;
+    justify-content: start;
+}
+
+.botao {
+    display: flex;
+    position: absolute;
+    bottom: 10px;
+    width: 87%;
+}
+
+#botao {
+    width: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+#desconto {
+    margin-bottom: 45px;
 }

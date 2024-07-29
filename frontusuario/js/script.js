@@ -62,11 +62,15 @@ function carregarLivros() {
             let card = `<div class="card space" style="width: 242px;">
                 <img src=${rs.foto1} class="card-img-top altura" alt="...">
                 <div class="card-body">
-                    <h3>${rs.nometitulo}</h3>
-                    <p class="card-text">Autor: ${rs.autor}</p>
-                    <p class="card-text livro">De: R$ ${rs.precoatual}</p>
-                    <p class="card-text">Por: R$ ${rs.precodesconto<1 ? rs.precoatual : rs.precodesconto}</p>
-                    <a href="detalhes.html?idlivro=${rs.idtitulo}" class="btn btn-dark">Saiba Mais</a>
+                    <div>
+                        <h3>${rs.nometitulo}</h3>
+                        <p class="card-text">Autor: ${rs.autor}</p>
+                        <p class="card-text livro">De: R$ ${rs.precoatual}</p>
+                        <p id="desconto" class="card-text">Por: R$ ${rs.precodesconto<1 ? rs.precoatual : rs.precodesconto}</p>
+                    </div>
+                    <div class=botao>
+                        <a href="detalhes.html?idlivro=${rs.idtitulo}" id="botao" class="btn btn-dark">Saiba Mais</a>
+                    </div>
                 </div>
             </div>`
 
@@ -80,11 +84,15 @@ function detalhes() {
     let id_url = window.location.search.split('=')
     //console.log(id_url)
     const conteudo = document.querySelector(".conteudo")
+
     fetch("http://127.0.0.1:9001/api/v1/livros/detalhes/"+id_url[1])
     .then((res) => res.json())
     .then((dados) => {
         dados.payload.map((rs) => {
 
+            document.querySelector("h2").innerHTML = `Detalhes do livro: `+rs.nometitulo
+            let porcentagem = ((rs.precoatual - rs.precodesconto) / rs.precoatual) * 100
+            
             let card = 
             `<div class="card mb-3 col-md-12">
             <div class="row g-0">
@@ -92,16 +100,16 @@ function detalhes() {
                 <div id="carouselExampleIndicators" class="carousel slide carouselDetalhe">
             <div class="carousel-inner ">
               <div class="carousel-item active ">
-                <img src="${rs.foto1}" class="d-block w-100" alt="Capa do Livro">
+                <img src="${rs.foto1}" class="d-block w-100 carouselImage" alt="Capa do Livro">
               </div>
               <div class="carousel-item">
-                <img src="${rs.foto2}" class="d-block w-100" alt="Imagens do livro 1">
+                <img src="${rs.foto2}" class="d-block w-100 carouselImage" alt="Imagens do livro 1">
               </div>
               <div class="carousel-item">
-                <img src="${rs.foto3}" class="d-block w-100" alt="Imagens do livro 2">
+                <img src="${rs.foto3}" class="d-block w-100 carouselImage" alt="Imagens do livro 2">
               </div>
               <div class="carousel-item active ">
-                <img src="${rs.foto4}" class="d-block w-100" alt="Capa do Livro">
+                <img src="${rs.foto4}" class="d-block w-100 carouselImage" alt="Capa do Livro">
               </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -120,6 +128,9 @@ function detalhes() {
                   <h5 class="card-title">Autor: ${rs.autor}</h5>
                   <p class="card-text">${rs.sinopse}</p>
                   <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
+                  <p id="desconto" class="card-text precodesconto">${rs.precodesconto < 1 ? porcentagem = "Sem desconto disponível" : `${porcentagem.toFixed(0)}%`}</p>
+                  <a href=carrinho_total.html?idlivro=${rs.idtitulo} class="carrinho" onclick="adicionarcarrinho()">
+                  <img src="img/carrinho.png" width = 40px; height = 40px>Incluir no carrinho</a>
                 </div>
             </div>
           </div>`
@@ -129,3 +140,169 @@ function detalhes() {
     })
     .catch((error) => console.error (`Erro na api ${error}`))
 }
+
+function buscar() {
+    const conteudo = document.querySelector(".conteudo")
+    conteudo.innerHTML = ''
+
+    let palavra = document.querySelector("input").value
+    if (palavra == null || palavra == "" || palavra == " ") {
+        location.reload()
+    } else {
+        document.querySelector("h2").innerHTML = `Você pesquisou por: ${palavra}`
+    }
+
+    fetch("http://127.0.0.1:9001/api/v1/livros/detalhes/titulo/"+palavra)
+    .then((res) => res.json())
+    .then((dados) => {
+        dados.payload.map((rs) => {
+
+            let porcentagem = ((rs.precoatual - rs.precodesconto) / rs.precoatual) * 100
+
+            let card = 
+            `<div class="card mb-3 col-md-12">
+            <div class="row g-0">
+              <div class="col-md-3">
+                <div id="carouselExampleIndicators" class="carousel slide carouselDetalhe">
+            <div class="carousel-inner ">
+              <div class="carousel-item active ">
+                <img src="${rs.foto1}" class="d-block w-100 carouselImage" alt="Capa do Livro">
+              </div>
+              <div class="carousel-item">
+                <img src="${rs.foto2}" class="d-block w-100 carouselImage" alt="Imagens do livro 1">
+              </div>
+              <div class="carousel-item">
+                <img src="${rs.foto3}" class="d-block w-100 carouselImage" alt="Imagens do livro 2">
+              </div>
+              <div class="carousel-item active ">
+                <img src="${rs.foto4}" class="d-block w-100 carouselImage" alt="Capa do Livro">
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              </div>
+              <div class="col-md-9">
+                <div class="card-body">
+                  <h3 class="card-title">${rs.nometitulo}</h3>
+                  <h5 class="card-title">Autor: ${rs.autor}</h5>
+                  <p class="card-text">${rs.sinopse}</p>
+                  <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
+                  <p id="desconto" class="card-text precodesconto">${rs.precodesconto < 1 ? porcentagem = "Sem desconto disponível" : `${porcentagem.toFixed(0)}%`}</p>
+                  <a href=carrinho.html?idlivro=${rs.idtitulo} class="carrinho">
+                  <img src="img/carrinho.png" width = 40px; height = 40px>Incluir no carrinho</a>
+                </div>
+            </div>
+          </div>`
+
+          conteudo.innerHTML += card
+        })
+    })
+    .catch((error) => console.error (`Erro na api ${error}`))
+}
+
+function carrinhototal() {
+  const carrinho = document.querySelector(".carrinho")
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/listar/")
+  .then((res) => res.json())
+  .then((dados) => {
+      dados.payload.map((rs) => {
+
+          let card = `<div>
+              <div>
+                  <div>
+                      <h3>${rs.quantidade}</h3>
+                      <p>${rs.total}</p>
+                  </div>
+              </div>
+          </div>`
+
+        carrinho.innerHTML += card
+      })
+  })
+  .catch((error) => console.error (`Erro na api ${error}`))
+
+  const total = document.querySelector(".total")
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/exibirtotal")
+  .then((res) => res.json())
+  .then((dados) => {
+      dados.payload.map((rs) => {
+
+          let card = `<div>
+              <div>
+                  <div>
+                      <p>${rs.total}</p>
+                  </div>
+              </div>
+          </div>`
+
+        total.innerHTML += card
+      })
+  })
+  .catch((error) => console.error (`Erro na api ${error}`))
+}
+
+function carrinho() {
+    let id_url = window.location.search.split('=')
+    const carrinho = document.querySelector(".carrinho")
+    fetch("http://127.0.0.1:9002/api/v1/carrinho/listar/"+id_url[1])
+    .then((res) => res.json())
+    .then((dados) => {
+        dados.payload.map((rs) => {
+
+            let card = `<div>
+                <div>
+                    <div>
+                        <h3>${rs.quantidade}</h3>
+                        <p>${rs.total}</p>
+                        <img src="${rs.foto1}" class="d-block w-100 carouselImage" alt="Capa do Livro">
+                        <p class="card-text livro">De: R$ ${rs.precoatual}</p>
+                        <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
+                    </div>
+                </div>
+            </div>`
+
+          carrinho.innerHTML += card
+        })
+    })
+    .catch((error) => console.error (`Erro na api ${error}`))
+
+    let idurl = window.location.search.split('=')
+    const total = document.querySelector(".total")
+    fetch("http://127.0.0.1:9002/api/v1/carrinho/exibir/"+idurl[1])
+    .then((res) => res.json())
+    .then((dados) => {
+        dados.payload.map((rs) => {
+
+            let card = `<div>
+                <div>
+                    <div>
+                        <p>${rs.total}</p>
+                    </div>
+                </div>
+            </div>` 
+
+          total.innerHTML += card
+        })
+    })
+    .catch((error) => console.error (`Erro na api ${error}`))
+}
+
+function adicionarcarrinho() {
+  let id_url = window.location.search.split('=')
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/adicionarlivro/"+id_url[1],{
+        method:"POST",
+        headers:{
+            "accept":"application/json",
+            "content-type":"application/json"
+        }
+      })
+  .then((res) => res.json())
+  .catch((error) => console.error (`Erro na api ${error}`))
+}                 
