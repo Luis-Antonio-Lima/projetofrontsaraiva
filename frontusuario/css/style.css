@@ -3,6 +3,17 @@ input, button {
     margin-bottom: 5px !important;
 }
 
+#fundo {
+    background-color: #d4d4d4;
+}
+
+#total {
+    display: flex;
+    font-size: 1.5em;
+    width: 100%;
+    justify-content: end;
+}
+
 .imglogin {
     width: 100%;
 }
@@ -99,4 +110,46 @@ input, button {
 
 #desconto {
     margin-bottom: 45px;
+}
+
+#space {
+    display: flex;
+    position: relative;
+    left: 7%;
+}
+
+#bottom {
+    display: flex;
+    flex-direction: row;
+}
+
+#coluna {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    left: 10%;
+}
+
+.precototal {
+    display: flex;
+    font-size: 1.3em;
+    font-weight: bold;
+    position: relative;
+    top: -10%;
+    left: 100%;
+}
+
+.opcao {
+    width: 20%;
+    height: 30px;
+}
+
+.botao2 {
+    width: 20%;
+    justify-content: center;
+}
+
+.imagem {
+    border-radius: 20px;
 }

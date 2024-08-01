@@ -237,7 +237,7 @@ function carrinhototal() {
           let card = `<div>
               <div>
                   <div>
-                      <p>${rs.total}</p>
+                      <p id="total">${rs.total}</p>
                   </div>
               </div>
           </div>`
@@ -256,16 +256,24 @@ function carrinho() {
     .then((dados) => {
         dados.payload.map((rs) => {
 
-            let card = `<div>
-                <div>
-                    <div>
-                        <h3>${rs.quantidade}</h3>
-                        <p>${rs.total}</p>
-                        <img src="${rs.foto1}" class="d-block w-100 carouselImage" alt="Capa do Livro">
-                        <p class="card-text livro">De: R$ ${rs.precoatual}</p>
-                        <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
-                    </div>
-                </div>
+            let card = `
+            <div class="card row mb-3 col-md-12">
+              <div class="col-md-12" id="bottom">
+                <img src="${rs.foto1}" class="d-block w-100 carouselImage imagem" alt="Capa do Livro">
+                <div class="col-md-7" id="coluna">
+                  <p class="precototal">${rs.total}</p>
+                  <p class="card-text livro">De: R$ ${rs.precoatual}</p>
+                  <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
+                  <select class="opcao" onchange="atualizarcarrinho(this.value, ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}, ${rs.total}, ${rs.idcarrinho})">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <button type="button" class="btn btn btn-outline-dark botao2" onclick="removercarrinho(${rs.idcarrinho})">Excluir</button>
+                </div>              
+              </div>
             </div>`
 
           carrinho.innerHTML += card
@@ -280,12 +288,8 @@ function carrinho() {
     .then((dados) => {
         dados.payload.map((rs) => {
 
-            let card = `<div>
-                <div>
-                    <div>
-                        <p>${rs.total}</p>
-                    </div>
-                </div>
+            let card = `<div id="total">
+              <p>${rs.total}</p>
             </div>` 
 
           total.innerHTML += card
@@ -306,3 +310,65 @@ function adicionarcarrinho() {
   .then((res) => res.json())
   .catch((error) => console.error (`Erro na api ${error}`))
 }                 
+
+function removercarrinho(id) {
+  //alert("teste: " + id)
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/removerlivro/"+id,{
+        method:"DELETE",
+        headers:{
+            "accept":"application/json",
+            "content-type":"application/json"
+        }
+      })
+  .then((res) => res.json())
+  .catch((error) => console.error (`Erro na api ${error}`))
+  location.reload()
+}
+
+
+function atualizarcarrinho(quantidade, real, total, id) {
+  //alert(quantidade)
+  if (quantidade == 1) {
+    //alert("teste, a quantidade do seu produto é 1 " + total)
+    total = real
+    //alert("teste, a quantidade do seu produto é 1 " + total + " " + id)
+  } else if (quantidade == 2) {
+    //alert("teste, a quantidade do seu produto é 2 " + total)
+    total = real * 2
+    //alert("teste, a quantidade do seu produto é 2 " + total + " " + id)
+  } else if (quantidade == 3) {
+    //alert("teste, a quantidade do seu produto é 3 " + total)
+    total = real * 3
+    //alert("teste, a quantidade do seu produto é 3 " + total + " " + id)
+  } else if (quantidade == 4) {
+    //alert("teste, a quantidade do seu produto é 4 " + total)
+    total = real * 4
+    //alert("teste, a quantidade do seu produto é 4 " + total + " " + id)
+  } else if (quantidade == 5) {
+    //alert("teste, a quantidade do seu produto é 5 " + total)
+    total = real * 5
+    //alert("teste, a quantidade do seu produto é 5 " + total.toFixed(2) + " " + id)
+  }
+  
+  const quantidadeProdutos = quantidade
+  const quantidadeTotal = total
+  
+  //alert(quantidadeProdutos + " " + quantidadeTotal.toFixed(2))
+  
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/atualizarlivro/"+id, {
+    method: "PUT",
+    headers: {
+      "accept": "application/json",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      carrinhoQuantidade: quantidade,
+      carrinhoTotal: total
+    })
+  }).then((res) => res.json())
+    .then((result) => {
+      console.log(result)
+    })
+    .catch((error) => console.error(`Erro ao acessar a api ${error}`))
+    //location.reload()
+}
