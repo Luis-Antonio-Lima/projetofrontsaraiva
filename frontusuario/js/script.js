@@ -214,14 +214,25 @@ function carrinhototal() {
   .then((dados) => {
       dados.payload.map((rs) => {
 
-          let card = `<div>
-              <div>
-                  <div>
-                      <h3>${rs.quantidade}</h3>
-                      <p>${rs.total}</p>
-                  </div>
-              </div>
-          </div>`
+        let card = `
+        <div class="card row mb-3 col-md-12">
+          <div class="col-md-12" id="bottom">
+            <img src="${rs.foto1}" class="d-block w-100 carouselImage imagem" alt="Capa do Livro">
+            <div class="col-md-7" id="coluna">
+              <p class="precototal" id="${rs.idcarrinho}">${rs.total}</p>
+              <p class="card-text livro">De: R$ ${rs.precoatual}</p>
+              <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
+              <select id="meuSelect" class="opcao" onchange="atualizarcarrinho(this.value, ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}, ${rs.total}, ${rs.idcarrinho})">
+                <option value="1" id="opcao1">1</option>
+                <option value="2" id="opcao2">2</option>
+                <option value="3" id="opcao3">3</option>
+                <option value="4" id="opcao4">4</option>
+                <option value="5" id="opcao5">5</option>
+              </select>
+              <button type="button" class="btn btn btn-outline-dark botao2" onclick="removercarrinho(${rs.idcarrinho})">Excluir</button>
+            </div>              
+          </div>
+        </div>`
 
         carrinho.innerHTML += card
       })
@@ -234,13 +245,9 @@ function carrinhototal() {
   .then((dados) => {
       dados.payload.map((rs) => {
 
-          let card = `<div>
-              <div>
-                  <div>
-                      <p id="total">${rs.total}</p>
-                  </div>
-              </div>
-          </div>`
+        let card = `<div id="total">
+          <p id="valortotal">${rs.total}</p>
+        </div>`
 
         total.innerHTML += card
       })
@@ -261,15 +268,15 @@ function carrinho() {
               <div class="col-md-12" id="bottom">
                 <img src="${rs.foto1}" class="d-block w-100 carouselImage imagem" alt="Capa do Livro">
                 <div class="col-md-7" id="coluna">
-                  <p class="precototal">${rs.total}</p>
+                  <p class="precototal" id="${rs.idcarrinho}">${rs.total}</p>
                   <p class="card-text livro">De: R$ ${rs.precoatual}</p>
                   <p id="preco" class="card-text precoatual">R$ ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}</p>
-                  <select class="opcao" onchange="atualizarcarrinho(this.value, ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}, ${rs.total}, ${rs.idcarrinho})">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                  <select id="meuSelect" class="opcao" onchange="atualizarcarrinho(this.value, ${rs.precodesconto < 1 ? rs.precoatual : rs.precodesconto}, ${rs.total}, ${rs.idcarrinho})">
+                    <option value="1" id="opcao1">1</option>
+                    <option value="2" id="opcao2">2</option>
+                    <option value="3" id="opcao3">3</option>
+                    <option value="4" id="opcao4">4</option>
+                    <option value="5" id="opcao5">5</option>
                   </select>
                   <button type="button" class="btn btn btn-outline-dark botao2" onclick="removercarrinho(${rs.idcarrinho})">Excluir</button>
                 </div>              
@@ -289,10 +296,11 @@ function carrinho() {
         dados.payload.map((rs) => {
 
             let card = `<div id="total">
-              <p>${rs.total}</p>
-            </div>` 
+              <p id="valortotal">${rs.total}</p>
+            </div>`
 
           total.innerHTML += card
+          valor_total()
         })
     })
     .catch((error) => console.error (`Erro na api ${error}`))
@@ -311,9 +319,9 @@ function adicionarcarrinho() {
   .catch((error) => console.error (`Erro na api ${error}`))
 }                 
 
-function removercarrinho(id) {
+function removercarrinho(idcar) {
   //alert("teste: " + id)
-  fetch("http://127.0.0.1:9002/api/v1/carrinho/removerlivro/"+id,{
+  fetch("http://127.0.0.1:9002/api/v1/carrinho/removerlivro/"+idcar,{
         method:"DELETE",
         headers:{
             "accept":"application/json",
@@ -322,7 +330,9 @@ function removercarrinho(id) {
       })
   .then((res) => res.json())
   .catch((error) => console.error (`Erro na api ${error}`))
-  location.reload()
+  setTimeout(() => {
+    location.reload()
+  },100)
 }
 
 
@@ -331,22 +341,32 @@ function atualizarcarrinho(quantidade, real, total, id) {
   if (quantidade == 1) {
     //alert("teste, a quantidade do seu produto é 1 " + total)
     total = real
+      opcao_1(total, id)
+      valor_total()
     //alert("teste, a quantidade do seu produto é 1 " + total + " " + id)
   } else if (quantidade == 2) {
     //alert("teste, a quantidade do seu produto é 2 " + total)
     total = real * 2
+      opcao_2(total, id)
+      valor_total()
     //alert("teste, a quantidade do seu produto é 2 " + total + " " + id)
   } else if (quantidade == 3) {
     //alert("teste, a quantidade do seu produto é 3 " + total)
     total = real * 3
+      opcao_3(total, id)
+      valor_total()
     //alert("teste, a quantidade do seu produto é 3 " + total + " " + id)
   } else if (quantidade == 4) {
     //alert("teste, a quantidade do seu produto é 4 " + total)
     total = real * 4
+      opcao_4(total, id)
+      valor_total()
     //alert("teste, a quantidade do seu produto é 4 " + total + " " + id)
   } else if (quantidade == 5) {
     //alert("teste, a quantidade do seu produto é 5 " + total)
     total = real * 5
+      opcao_5(total, id)
+      valor_total()
     //alert("teste, a quantidade do seu produto é 5 " + total.toFixed(2) + " " + id)
   }
   
@@ -370,5 +390,45 @@ function atualizarcarrinho(quantidade, real, total, id) {
       console.log(result)
     })
     .catch((error) => console.error(`Erro ao acessar a api ${error}`))
-    //location.reload()
+}
+
+function opcao_1(att, id) {
+  document.getElementById(id).innerHTML = att.toFixed(2)
+  //console.log("valor atualizado")
+}
+
+function opcao_2(att, id) {
+  document.getElementById(id).innerHTML = att.toFixed(2)
+  //console.log("valor atualizado")
+}
+
+function opcao_3(att, id) {
+  document.getElementById(id).innerHTML = att.toFixed(2)
+  //console.log("valor atualizado")
+}
+
+function opcao_4(att, id) {
+  document.getElementById(id).innerHTML = att.toFixed(2)
+  //console.log("valor atualizado")
+}
+
+function opcao_5(att, id) {
+  document.getElementById(id).innerHTML = att.toFixed(2)
+  //console.log("valor atualizado")
+}
+
+function valor_total(att) {
+    setTimeout(() => {
+      let idurl = window.location.search.split('=')
+    const total = document.querySelector(".total")
+    fetch("http://127.0.0.1:9002/api/v1/carrinho/exibir/"+idurl[1])
+    .then((res) => res.json())
+    .then((dados) => {
+        dados.payload.map((rs) => {
+
+          document.getElementById("valortotal").innerHTML = (rs.total)
+        })
+    })
+    .catch((error) => console.error (`Erro na api ${error}`))
+    },50)
 }
